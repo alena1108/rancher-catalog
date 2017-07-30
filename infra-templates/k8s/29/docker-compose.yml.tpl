@@ -31,7 +31,7 @@ kubelet:
         {{- range $i, $elem := splitPreserveQuotes .Values.ADDITIONAL_KUBELET_FLAGS }}
         - {{ $elem }}
         {{- end }}
-    image: alena1108/k8s:dev
+    image: alena1108/k8s:patch
     volumes:
         - /run:/run
         - /var/run:/var/run
@@ -61,7 +61,6 @@ kubelet-unschedulable:
     command:
         - kubelet
         - --kubeconfig=/etc/kubernetes/ssl/kubeconfig
-        - --api_servers=https://kubernetes.kubernetes.rancher.internal:6443
         - --allow-privileged=true
         - --register-node=true
         {{- if eq .Values.CLOUD_PROVIDER "rancher" }}
@@ -83,7 +82,7 @@ kubelet-unschedulable:
         {{- range $i, $elem := splitPreserveQuotes .Values.ADDITIONAL_KUBELET_FLAGS }}
         - {{ $elem }}
         {{- end }}
-    image: alena1108/k8s:dev
+    image: alena1108/k8s:patch
     volumes:
         - /run:/run
         - /var/run:/var/run
@@ -109,7 +108,7 @@ proxy:
         - --kubeconfig=/etc/kubernetes/ssl/kubeconfig
         - --v=2
         - --healthz-bind-address=0.0.0.0
-    image: alena1108/k8s:dev
+    image: alena1108/k8s:patch
     labels:
         io.rancher.container.dns: "true"
         io.rancher.scheduler.global: "true"
@@ -169,7 +168,7 @@ kubernetes:
         {{- end }}
     environment:
         KUBERNETES_URL: https://kubernetes.kubernetes.rancher.internal:6443
-    image: alena1108/k8s:dev
+    image: alena1108/k8s:patch
     links:
         - etcd
         - rancher-kubernetes-auth
@@ -215,7 +214,7 @@ scheduler:
         - kube-scheduler
         - --kubeconfig=/etc/kubernetes/ssl/kubeconfig
         - --address=0.0.0.0
-    image: alena1108/k8s:dev
+    image: alena1108/k8s:patch
     labels:
         {{- if eq .Values.CONSTRAINT_TYPE "required" }}
         io.rancher.scheduler.affinity:host_label: orchestration=true
@@ -237,7 +236,7 @@ controller-manager:
         - --address=0.0.0.0
         - --root-ca-file=/etc/kubernetes/ssl/ca.pem
         - --service-account-private-key-file=/etc/kubernetes/ssl/key.pem
-    image: alena1108/k8s:dev
+    image: alena1108/k8s:patch
     labels:
         {{- if eq .Values.CONSTRAINT_TYPE "required" }}
         io.rancher.scheduler.affinity:host_label: orchestration=true
@@ -254,7 +253,7 @@ rancher-cloud-controller-manager:
         - --cloud-provider=rancher
         - --address=0.0.0.0
         - --service-account-private-key-file=/etc/kubernetes/ssl/key.pem
-    image: alena1108/k8s:dev
+    image: alena1108/k8s:patch
     labels:
         {{- if eq .Values.CONSTRAINT_TYPE "required" }}
         io.rancher.scheduler.affinity:host_label: orchestration=true
@@ -331,7 +330,7 @@ rancher-kubernetes-auth:
 
 {{- if eq .Values.ENABLE_ADDONS "true" }}
 addon-starter:
-    image: alena1108/k8s:dev
+    image: alena1108/k8s:patch
     labels:
         {{- if eq .Values.CONSTRAINT_TYPE "required" }}
         io.rancher.scheduler.affinity:host_label: orchestration=true
@@ -348,9 +347,3 @@ addon-starter:
     links:
         - kubernetes
 {{- end }}
-
-
-service-aliaser:
-    environment:
-        KUBERNETES_URL: https://kubernetes.kubernetes.rancher.internal:6443
-    image: alena1108/servicealias:dev
