@@ -13,6 +13,7 @@ kubelet:
         - --api_servers=https://kubernetes.kubernetes.rancher.internal:6443
         - --allow-privileged=true
         - --register-node=true
+        - --v=9
         {{- if eq .Values.CLOUD_PROVIDER "rancher" }}
         - --cloud-provider=external
         {{- else }}
@@ -49,7 +50,6 @@ kubelet:
     privileged: true
     links:
         - kubernetes
-        - rancher-cloud-controller-manager
 
 {{- if eq .Values.CONSTRAINT_TYPE "required" }}
 kubelet-unschedulable:
@@ -167,6 +167,7 @@ kubernetes:
         - --runtime-config=authentication.k8s.io/v1beta1=true
         {{- if eq .Values.RBAC "true" }}
         - --authorization-mode=RBAC
+        - --v=9
         {{- end }}
     environment:
         KUBERNETES_URL: https://kubernetes.kubernetes.rancher.internal:6443
@@ -216,6 +217,7 @@ scheduler:
         - kube-scheduler
         - --kubeconfig=/etc/kubernetes/ssl/kubeconfig
         - --address=0.0.0.0
+        - --v=9
     image: rancher/k8s:v1.7.2-rancher6
     labels:
         {{- if eq .Values.CONSTRAINT_TYPE "required" }}
@@ -238,24 +240,7 @@ controller-manager:
         - --address=0.0.0.0
         - --root-ca-file=/etc/kubernetes/ssl/ca.pem
         - --service-account-private-key-file=/etc/kubernetes/ssl/key.pem
-    image: rancher/k8s:v1.7.2-rancher6
-    labels:
-        {{- if eq .Values.CONSTRAINT_TYPE "required" }}
-        io.rancher.scheduler.affinity:host_label: orchestration=true
-        {{- end }}
-        io.rancher.container.create_agent: "true"
-        io.rancher.container.agent.role: environmentAdmin
-    links:
-        - kubernetes
-        - rancher-cloud-controller-manager
-
-rancher-cloud-controller-manager:
-    command:
-        - rancher-cloud-controller-manager
-        - --kubeconfig=/etc/kubernetes/ssl/kubeconfig
-        - --cloud-provider=rancher
-        - --address=0.0.0.0
-        - --service-account-private-key-file=/etc/kubernetes/ssl/key.pem
+        - --v=9
     image: rancher/k8s:v1.7.2-rancher6
     labels:
         {{- if eq .Values.CONSTRAINT_TYPE "required" }}
