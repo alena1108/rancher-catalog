@@ -26,7 +26,7 @@ kubelet:
         {{- range $i, $elem := splitPreserveQuotes .Values.ADDITIONAL_KUBELET_FLAGS }}
         - {{ $elem }}
         {{- end }}
-    image: rancher/k8s:v1.8.0-beta.0-rancher1
+    image: alena1108/k8s:private
     volumes:
         - /run:/run
         - /var/run:/var/run
@@ -73,7 +73,7 @@ kubelet-unschedulable:
         {{- range $i, $elem := splitPreserveQuotes .Values.ADDITIONAL_KUBELET_FLAGS }}
         - {{ $elem }}
         {{- end }}
-    image: rancher/k8s:v1.8.0-beta.0-rancher1
+    image: alena1108/k8s:private
     volumes:
         - /run:/run
         - /var/run:/var/run
@@ -99,7 +99,7 @@ proxy:
         - --kubeconfig=/etc/kubernetes/ssl/kubeconfig
         - --v=2
         - --healthz-bind-address=0.0.0.0
-    image: rancher/k8s:v1.8.0-beta.0-rancher1
+    image: alena1108/k8s:private
     labels:
         io.rancher.container.dns: "true"
         io.rancher.scheduler.global: "true"
@@ -174,7 +174,7 @@ kubernetes:
         {{- end }}
     environment:
         KUBERNETES_URL: https://kubernetes.kubernetes.rancher.internal:6443
-    image: rancher/k8s:v1.8.0-beta.0-rancher1
+    image: alena1108/k8s:private
     links:
         - etcd
 
@@ -228,7 +228,7 @@ scheduler:
         - kube-scheduler
         - --kubeconfig=/etc/kubernetes/ssl/kubeconfig
         - --address=0.0.0.0
-    image: rancher/k8s:v1.8.0-beta.0-rancher1
+    image: alena1108/k8s:private
     labels:
         {{- if eq .Values.CONSTRAINT_TYPE "required" }}
         io.rancher.scheduler.affinity:host_label: orchestration=true
@@ -246,7 +246,7 @@ controller-manager:
         - --address=0.0.0.0
         - --root-ca-file=/etc/kubernetes/ssl/ca.pem
         - --service-account-private-key-file=/etc/kubernetes/ssl/key.pem
-    image: rancher/k8s:v1.8.0-beta.0-rancher1
+    image: alena1108/k8s:private
     labels:
         {{- if eq .Values.CONSTRAINT_TYPE "required" }}
         io.rancher.scheduler.affinity:host_label: orchestration=true
@@ -324,7 +324,7 @@ rancher-kubernetes-auth:
 
 {{- if eq .Values.ENABLE_ADDONS "true" }}
 addon-starter:
-    image: rancher/k8s:v1.8.0-beta.0-rancher1
+    image: alena1108/k8s:private
     labels:
         {{- if eq .Values.CONSTRAINT_TYPE "required" }}
         io.rancher.scheduler.affinity:host_label: orchestration=true
